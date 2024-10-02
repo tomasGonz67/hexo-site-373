@@ -21,13 +21,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Specify your Node.js version
+          node-version: '20'
           cache: 'npm'
 
       # Install dependencies in the blog directory
       - name: Install dependencies in the blog directory
-        working-directory: blog  # Ensure you're in the 'blog' directory
-        run: npm install --force  # Force installation to ensure everything is correct
+        working-directory: blog
+        run: npm install --force
 
       # Generate the static website
       - name: Generate Hexo site
@@ -45,14 +45,12 @@ jobs:
       - name: Wait for Hexo server to start
         run: npx wait-on http://localhost:4000
 
-      # Checkout the Playwright test repository
-      - name: Checkout Playwright test repository
-        uses: actions/checkout@v3
-        with:
-          repository: vvh24/IS373-Playwright
-          path: playwright-test-repo
-
-      # Install Playwright dependencies
+      # Clone your Playwright repository
+      - name: Clone Playwright repository
+        run: |
+          git clone https://github.com/vvh24/IS373-Playwright.git playwright-test-repo
+          
+      # Install Playwright dependencies from the Playwright repo
       - name: Install Playwright dependencies
         working-directory: playwright-test-repo
         run: npm ci
@@ -62,10 +60,10 @@ jobs:
         working-directory: playwright-test-repo
         run: npx playwright install
 
-      # Run the Playwright tests against the running Hexo site
+      # Run the Playwright tests using the config from the cloned Playwright repository
       - name: Run Playwright tests
         working-directory: playwright-test-repo
-        run: npx playwright test --config=playwright-test-repo/playwright.config.js
+        run: npx playwright test --config=playwright.config.js
 
       # Stop the Hexo server
       - name: Stop Hexo server
