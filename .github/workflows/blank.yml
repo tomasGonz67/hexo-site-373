@@ -47,7 +47,17 @@ jobs:
           npx hexo server --port 4000 > hexo.log 2>&1 &
           echo $! > hexo.pid
 
-
+      # Wait for the Hexo server to start
+      - name: Wait for Hexo server
+        run: |
+          for i in {1..20}; do
+            if curl -s http://localhost:4000 > /dev/null; then
+              echo "Hexo server is running."
+              break
+            fi
+            echo "Waiting for Hexo server to start..."
+            sleep 5
+          done
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
@@ -56,6 +66,10 @@ jobs:
           repository: vvh24/IS373-Playwright
           path: playwright-test-repo
           token: ${{ secrets.GITHUB_TOKEN }}  # Ensure you have the right permissions
+
+      # List files in the Playwright test repository for debugging
+      - name: List files in Playwright test repository
+        run: ls -R playwright-test-repo
 
       # Install Playwright dependencies
       - name: Install Playwright dependencies
@@ -106,3 +120,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
+
