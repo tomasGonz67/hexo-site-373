@@ -32,6 +32,9 @@ jobs:
       - name: Generate Hexo site
         run: npx hexo generate
 
+      - name: cd into blog
+        run: cd blog
+
       # Start the Hexo server in the background
       - name: Start Hexo server
         run: |
@@ -68,7 +71,7 @@ jobs:
       - name: Stop Hexo server
         if: always()
         run: |
-          if [-f hexo.pid ]; kill $(cat hexo.pid); fi
+          kill $(cat hexo.pid)
 
   deploy:
     runs-on: ubuntu-latest
@@ -96,4 +99,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
+
 
