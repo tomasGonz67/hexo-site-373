@@ -45,9 +45,7 @@ jobs:
           npx hexo server &
           echo $! > hexo.pid
 
-      # Wait for the Hexo server to be ready
-      - name: Wait for Hexo server to start
-        run: npx wait-on http://localhost:4000
+
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
