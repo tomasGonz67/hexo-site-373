@@ -42,7 +42,7 @@ jobs:
 
       # Start the Hexo server in the background
       - name: Start Hexo server
-        run: hexo server 
+        run: npx hexo server --port 4000
 
       # Wait for the Hexo server to start
       - name: Wait for Hexo server
