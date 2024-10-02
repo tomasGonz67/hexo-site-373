@@ -35,9 +35,8 @@ jobs:
 
       - name: Clone Playwright test repository
         run: |
-          git clone https://github.com/your-username/playwright-test-repo.git
-          cd playwright-test-repo
-          npm install https://github.com/vvh24/IS373-Playwright.git
+          git clone https://github.com/vvh24/IS373-Playwright.git
+          npm install
 
 
       # Checkout the Playwright test repository
