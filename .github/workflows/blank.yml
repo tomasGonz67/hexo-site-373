@@ -34,16 +34,13 @@ jobs:
 
       # Generate the static website
       - name: Generate Hexo site
-        run: npx hexo generate
-
-      - name: NPM Install
-        run: npm install
+        run: hexo init blog
 
       # Start the Hexo server in the background
       - name: Start Hexo server
         working-directory: blog
         run: |
-          hexo server --port 4000 
+          hexo server
 
       # Wait for the Hexo server to start
                 # Wait for the Hexo server to start
