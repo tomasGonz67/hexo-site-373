@@ -47,14 +47,6 @@ jobs:
           run: node test.js
 
 
-      # Stop the Hexo server
-      - name: Stop Hexo server
-        if: always()
-        working-directory: blog
-        run: |
-          if [ -f hexo.pid ]; then
-            kill $(cat hexo.pid) || true
-          fi
 
   deploy:
     runs-on: ubuntu-latest
