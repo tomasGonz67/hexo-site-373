@@ -45,9 +45,7 @@ jobs:
 
       # Wait for the Hexo server to start
           
-      # Check Hexo server log
-      - name: Check Hexo server log
-        run: cat hexo.log
+
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
