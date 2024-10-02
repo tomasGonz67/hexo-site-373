@@ -28,13 +28,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Hexo site
+        run: npm install hexo-cli -g
+
       - name: next step
         run: hexo init blog
 
 
       # Generate the static website
-      - name: Generate Hexo site
-        run: npm install hexo-cli -g
+
 
       - name: cd into blog
         run: cd blog
