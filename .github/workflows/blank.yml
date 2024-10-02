@@ -68,7 +68,7 @@ jobs:
       - name: Stop Hexo server
         if: always()
         run: |
-          kill $(cat hexo.pid)
+          if [-f hexo.pid ]; kill $(cat hexo.pid); fi
 
   deploy:
     runs-on: ubuntu-latest
