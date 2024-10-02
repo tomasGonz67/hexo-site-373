@@ -31,9 +31,6 @@ jobs:
       - name: Generate Hexo site
         run: npm install hexo-cli -g
 
-      - name: next step
-        run: hexo init blog
-
 
       # Generate the static website
 
