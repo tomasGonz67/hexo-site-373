@@ -36,6 +36,9 @@ jobs:
       - name: Generate Hexo site
         run: npx hexo generate
 
+      - name: NPM Install
+        run: npm install
+
       # Start the Hexo server in the background
       - name: Start Hexo server
         working-directory: blog
