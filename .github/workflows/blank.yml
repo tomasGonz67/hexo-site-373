@@ -3,10 +3,10 @@ name: Test and Deploy Hexo Site
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on pull request to the main branch
+      - main
 
 jobs:
   build-and-test:
@@ -24,35 +24,26 @@ jobs:
           node-version: '20'  # Specify your Node.js version
           cache: 'npm'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
+      # Install dependencies in the blog directory
+      - name: Install dependencies in the blog directory
+        working-directory: blog  # Ensure you're in the 'blog' directory
+        run: npm install --force  # Force installation to ensure everything is correct
 
-      # Install Hexo CLI globally
-      - name: Install Hexo CLI
-        run: npm install hexo-cli -g
-
-
+      # Generate the static website
+      - name: Generate Hexo site
+        working-directory: blog
+        run: npx hexo generate
 
       # Start the Hexo server in the background
       - name: Start Hexo server
         working-directory: blog
         run: |
-          hexo server
+          npx hexo server &
+          echo $! > hexo.pid  # Save the process ID (PID) to a file
 
-      # Wait for the Hexo server to start
-                # Wait for the Hexo server to start
-      - name: Wait for Hexo server
-        run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:4000 > /dev/null; then
-              echo "Hexo server is running."
-              break
-            fi
-            echo "Waiting for Hexo server to start..."
-            sleep 5
-          done
-
+      # Wait for the Hexo server to be available
+      - name: Wait for Hexo server to start
+        run: npx wait-on http://localhost:4000
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
@@ -60,7 +51,6 @@ jobs:
         with:
           repository: vvh24/IS373-Playwright
           path: playwright-test-repo
-          token: ${{ secrets.GITHUB_TOKEN }}  # Ensure you have the right permissions
 
       # Install Playwright dependencies
       - name: Install Playwright dependencies
@@ -75,11 +65,12 @@ jobs:
       # Run the Playwright tests against the running Hexo site
       - name: Run Playwright tests
         working-directory: playwright-test-repo
-        run: node test.js
+        run: npx playwright test --config=playwright-test-repo/playwright.config.js
 
-      # Stop Hexo server
+      # Stop the Hexo server
       - name: Stop Hexo server
         if: always()
+        working-directory: blog
         run: |
           if [ -f hexo.pid ]; then
             kill $(cat hexo.pid) || true
@@ -91,21 +82,28 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
+      # Checkout Hexo repository
       - name: Checkout Hexo repository
         uses: actions/checkout@v4
 
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      # Install dependencies in the blog directory
+      - name: Install dependencies in the blog directory
+        working-directory: blog
         run: npm ci
 
+      # Generate Hexo site
       - name: Generate Hexo site
+        working-directory: blog
         run: npx hexo generate
 
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
