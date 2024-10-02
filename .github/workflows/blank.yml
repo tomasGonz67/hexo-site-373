@@ -32,9 +32,7 @@ jobs:
       - name: Install Hexo CLI
         run: npm install hexo-cli -g
 
-      # Generate the static website
-      - name: Generate Hexo site
-        run: hexo init blog
+
 
       # Start the Hexo server in the background
       - name: Start Hexo server
