@@ -43,8 +43,7 @@ jobs:
       - name: Start Hexo server
         working-directory: blog
         run: |
-          npx hexo server --port 4000 > hexo.log 2>&1 &
-          echo $! > hexo.pid
+          hexo server --port 4000 
 
       # Wait for the Hexo server to start
                 # Wait for the Hexo server to start
