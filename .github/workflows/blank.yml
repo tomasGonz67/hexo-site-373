@@ -28,38 +28,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Install Hexo CLI globally
-      - name: Install Hexo CLI
-        run: npm install hexo-cli -g
-
       # Generate the static website
       - name: Generate Hexo site
         run: npx hexo generate
 
       # Start the Hexo server in the background
       - name: Start Hexo server
-        working-directory: blog
         run: |
-          npx hexo server --port 4000 > hexo.log 2>&1 &
+          npx hexo server &
           echo $! > hexo.pid
 
-      # Wait for the Hexo server to start
-      - name: Wait for Hexo server
-        run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:4000 > /dev/null; then
-              echo "Hexo server is running."
-              break
-            fi
-            echo "Waiting for Hexo server to start..."
-            sleep 5
-          done
+      # Wait for the Hexo server to be ready
+      - name: Wait for Hexo server to start
+        run: npx wait-on http://localhost:4000
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          repository: vvh24/IS373-Playwright
+          repository: your-username/playwright-test-repo
           path: playwright-test-repo
 
       # Install Playwright dependencies
@@ -75,15 +62,13 @@ jobs:
       # Run the Playwright tests against the running Hexo site
       - name: Run Playwright tests
         working-directory: playwright-test-repo
-        run: npx playwright test --config=playwright-test-repo/playwright.config.js
+        run: npx playwright test --config=path-to-your-playwright-config
 
       # Stop the Hexo server
       - name: Stop Hexo server
         if: always()
         run: |
-          if [ -f hexo.pid ]; then
-            kill $(cat hexo.pid) || true
-          fi
+          kill $(cat hexo.pid)
 
   deploy:
     runs-on: ubuntu-latest
@@ -107,9 +92,7 @@ jobs:
         run: npx hexo generate
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
-
-
