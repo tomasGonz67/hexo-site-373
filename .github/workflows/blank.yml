@@ -21,49 +21,32 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20'  # Specify your Node.js version
           cache: 'npm'
 
-      # Install dependencies in the blog directory
-      - name: Install dependencies in the blog directory
-        working-directory: blog
-        run: npm install --force
+      - name: Install Hexo and dependencies
+        run: |
+          npm install hexo-cli -g
+          npm install
 
       # Generate the static website
       - name: Generate Hexo site
-        working-directory: blog
-        run: npx hexo generate
+        run: hexo generate
 
-      # Start the Hexo server in the background
-      - name: Start Hexo server
-        working-directory: blog
+      - name: Clone Playwright test repository
         run: |
-          npx hexo server &
-          echo $! > hexo.pid  # Save the process ID (PID) to a file
+          git clone https://github.com/your-username/playwright-test-repo.git
+          cd playwright-test-repo
+          npm install https://github.com/vvh24/IS373-Playwright.git
 
-      # Wait for the Hexo server to be available
-      - name: Wait for Hexo server to start
-        run: npx wait-on http://localhost:4000
 
-      # Clone your Playwright repository
-      - name: Clone Playwright repository
-        run: |
-          git clone https://github.com/vvh24/IS373-Playwright.git playwright-test-repo
-          
-      # Install Playwright dependencies from the Playwright repo
-      - name: Install Playwright dependencies
-        working-directory: playwright-test-repo
-        run: npm ci
+      # Checkout the Playwright test repository
+      - name: Checkout Playwright test repository
+        uses: actions/checkout@v4
+        with:
+          repository: vvh24/IS373-Playwright
+          run: node test.js
 
-      # Install Playwright browsers
-      - name: Install Playwright browsers
-        working-directory: playwright-test-repo
-        run: npx playwright install
-
-      # Run the Playwright tests using the config from the cloned Playwright repository
-      - name: Run Playwright tests
-        working-directory: playwright-test-repo
-        run: npx playwright test --config=playwright.config.js
 
       # Stop the Hexo server
       - name: Stop Hexo server
@@ -107,4 +90,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
-
