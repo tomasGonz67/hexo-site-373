@@ -41,7 +41,8 @@ jobs:
         run: cd blog
 
       # Start the Hexo server in the background
-
+      - name: Start Hexo server
+        run: hexo server 
 
       # Wait for the Hexo server to start
       - name: Wait for Hexo server
@@ -56,9 +57,7 @@ jobs:
             sleep 5
           done
 
-      - name: Start Hexo server
-        run: |
-          hexo server 
+
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
         uses: actions/checkout@v3
