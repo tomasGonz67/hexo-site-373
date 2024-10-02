@@ -47,17 +47,6 @@ jobs:
           npx hexo server --port 4000 > hexo.log 2>&1 &
           echo $! > hexo.pid
 
-      # Wait for the Hexo server to start
-      - name: Wait for Hexo server
-        run: |
-          for i in {1..20}; do
-            if curl -s http://localhost:4000 > /dev/null; then
-              echo "Hexo server is running."
-              break
-            fi
-            echo "Waiting for Hexo server to start..."
-            sleep 5
-          done
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
