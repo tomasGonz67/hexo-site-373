@@ -3,10 +3,10 @@ name: Test and Deploy Hexo Site
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on pull request to the main branch
+      - main
 
 jobs:
   build-and-test:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Specify your Node.js version
+          node-version: '20'
           cache: 'npm'
 
       # Install dependencies
@@ -32,31 +32,21 @@ jobs:
       - name: Install Hexo CLI
         run: npm install hexo-cli -g
 
-      # Generate the static website
+      # Change to the blog directory and generate the static site
       - name: Generate Hexo site
+        working-directory: blog  # Replace 'blog' with the correct directory
         run: npx hexo generate
-
-      # Change to the blog directory
-      - name: Change to blog directory
-        run: cd blog
 
       # Start the Hexo server in the background
       - name: Start Hexo server
-        run: npx hexo server --port 4000
-
-      # Wait for the Hexo server to start
-      - name: Wait for Hexo server
+        working-directory: blog  # Ensure you're in the correct directory
         run: |
-          # Wait for the server to be available
-          for i in {1..10}; do
-            if curl -s http://localhost:4000 > /dev/null; then
-              echo "Hexo server is running."
-              break
-            fi
-            echo "Waiting for Hexo server to start..."
-            sleep 5
-          done
+          npx hexo server &
+          echo $! > hexo.pid  # Save the process ID (PID) to a file
 
+      # Wait for the Hexo server to be available
+      - name: Wait for Hexo server to start
+        run: npx wait-on http://localhost:4000
 
       # Checkout the Playwright test repository
       - name: Checkout Playwright test repository
@@ -83,6 +73,7 @@ jobs:
       # Stop the Hexo server
       - name: Stop Hexo server
         if: always()
+        working-directory: blog  # Ensure you're in the correct directory
         run: |
           if [ -f hexo.pid ]; then
             kill $(cat hexo.pid) || true
@@ -94,25 +85,32 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
+      # Checkout Hexo repository
       - name: Checkout Hexo repository
         uses: actions/checkout@v4
 
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
+      # Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      # Generate Hexo site
       - name: Generate Hexo site
+        working-directory: blog  # Ensure you're in the correct directory
         run: npx hexo generate
 
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
+
 
 
