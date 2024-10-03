@@ -46,6 +46,38 @@ jobs:
           repository: vvh24/IS373-Playwright
           run: node test.js
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push'
 
+    steps:
+      # Checkout Hexo repository
+      - name: Checkout Hexo repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Install dependencies in the blog directory
+      - name: Install dependencies in the blog directory
+        working-directory: blog
+        run: npm ci
+
+      # Generate Hexo site
+      - name: Generate Hexo site
+        working-directory: blog
+        run: npx hexo generate
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
 
 
