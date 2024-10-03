@@ -73,9 +73,10 @@ jobs:
           npm install hexo-cli -g
           npm install
 
-      # Generate Hexo site
-      - name: Generate Hexo site
-        run: npx hexo generate
+      - name: Generate Hexo static site
+        run: |
+          cd blog
+          hexo generate
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
