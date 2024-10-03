@@ -104,5 +104,5 @@ deploy:
   type: git
   repo: 
     github:
-      url: 'https://github.com/tomasGonz67/tomasGonz67.github.io.git'
+      url: 'https://github.com/tomasGonz67/hexo-site-373.git'
       branch: master
