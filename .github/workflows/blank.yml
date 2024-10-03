@@ -50,22 +50,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # Checkout the Hexo website repository
+      - name: Checkout Hexo repository
+        uses: actions/checkout@v4
 
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Specify the version of Node.js you want to use
+          node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      # Install Hexo and dependencies
+      - name: Install Hexo and dependencies
+        run: |
+          npm install hexo-cli -g
+          npm install
 
-      - name: Build Hexo
-        run: npm run generate  # Adjust this command if your build script is named differently
+      # Generate the static website
+      - name: Generate Hexo site
+        run: hexo generate
 
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        run: npm run deploy  # Make sure your package.json has a deploy script that runs 'hexo deploy'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided by GitHub Actions
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: master  # Deploy to gh-pages branch
+          publish_dir: ./public 
           
