@@ -50,31 +50,22 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
+      - name: Checkout the code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Hexo and dependencies
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy Hexo to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This is provided automatically by GitHub Actions
         run: |
           npm install hexo-cli -g
-          npm install
-
-      - name: Generate static files
-        run: hexo generate
-
-      - name: Deploy to GitHub Pages
-        run: |
-          git clone https://github.com/tomasGonz67/hexo-site-373.git .deploy_git
-          cd .deploy_git
-          git checkout gh-pages || git checkout --orphan gh-pages
-          cd ..
-          rsync -av --delete public/ .deploy_git/
-          cd .deploy_git
-          git add .
-          git commit -m "Deploy site"
-          git push origin gh-pages
+          hexo generate
+          hexo deploy
           
