@@ -76,7 +76,7 @@ jobs:
       # Generate Hexo site
       - name: Generate Hexo site
         working-directory: blog
-        run: hexo generate
+        run: npx hexo generate
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
