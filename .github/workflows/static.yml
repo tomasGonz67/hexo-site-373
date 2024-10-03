@@ -78,6 +78,10 @@ jobs:
         working-directory: blog
         run: hexo generate
 
+      - name: Serve Hexo Site
+        working-directory: blog
+        run: hexo server
+
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
