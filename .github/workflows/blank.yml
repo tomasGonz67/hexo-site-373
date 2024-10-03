@@ -48,43 +48,24 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.event_name == 'push'
 
     steps:
-      # Checkout Hexo repository
-      - name: Checkout Hexo repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '20'  # Specify the version of Node.js you want to use
 
-      # Install dependencies in the blog directory
-      - name: Install dependencies in the blog directory
-        working-directory: blog
-        run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-      # Install Hexo CLI and dependencies
-      - name: Install Hexo CLI and dependencies
-        run: |
-          cd blog
-          npm install hexo-cli -g
-          npm install
+      - name: Build Hexo
+        run: npm run generate  # Adjust this command if your build script is named differently
 
-      - name: Generate Hexo static site
-        run: |
-          cd blog
-          hexo generate
-
-      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages  
-          publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
+        run: npm run deploy  # Make sure your package.json has a deploy script that runs 'hexo deploy'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided by GitHub Actions
           
