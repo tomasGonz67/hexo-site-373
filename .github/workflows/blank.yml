@@ -68,8 +68,10 @@ jobs:
         working-directory: blog
         run: npm ci
 
-      - name: Install Hexo and dependencies
+      # Install Hexo CLI and dependencies
+      - name: Install Hexo CLI and dependencies
         run: |
+          cd blog
           npm install hexo-cli -g
           npm install
 
