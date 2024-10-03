@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "hexo-deployer-git": "^4.0.0"
   }
 }
