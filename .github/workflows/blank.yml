@@ -46,26 +46,37 @@ jobs:
           repository: vvh24/IS373-Playwright
           run: node test.js
 
-  deploy:
+ deploy:
     runs-on: ubuntu-latest
-    
+    needs: build-and-test  # Ensure deployment only happens if the tests pass
+    if: github.event_name == 'push'
+
     steps:
-      - name: Checkout the code
+      # Checkout the Hexo repository again (to prevent loss of state)
+      - name: Checkout Hexo repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      # Set up Node.js environment
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20'  # Make sure it matches your environment
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Deploy Hexo to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This is provided automatically by GitHub Actions
+      # Install Hexo and dependencies
+      - name: Install Hexo and dependencies
         run: |
           npm install hexo-cli -g
-          hexo generate
-          hexo deploy
+          npm install
+
+      # Re-generate the static website (if necessary)
+      - name: Generate Hexo site
+        run: hexo generate
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
+
           
