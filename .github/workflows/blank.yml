@@ -58,9 +58,9 @@ jobs:
 
       # Set up Node.js environment
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'  # Make sure it matches your environment
+          node-version: '20'  # Make sure it matches your environment
 
       # Install Hexo and dependencies
       - name: Install Hexo and dependencies
@@ -74,7 +74,7 @@ jobs:
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
