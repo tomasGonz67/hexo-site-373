@@ -64,10 +64,14 @@ jobs:
         with:
           node-version: '20'  # Make sure it matches your environment
 
+
+
       # Install Hexo and dependencies
       - name: Install Hexo and dependencies
         run: sudo npm install -g hexo-cli
 
+      - name: go into blog
+        run: cd blog
 
       - name: install deployer
         run: npm install hexo-deployer-git --save
