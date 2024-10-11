@@ -54,7 +54,7 @@ jobs:
     steps:
       # Checkout the Hexo repository again (to prevent loss of state)
       - name: Checkout Hexo repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set up Node.js environment
       - name: Install Node.js
