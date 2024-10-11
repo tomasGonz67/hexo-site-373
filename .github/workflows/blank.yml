@@ -55,6 +55,7 @@ jobs:
       # Checkout the Hexo repository again (to prevent loss of state)
       - name: Checkout Hexo repository
         uses: actions/checkout@v4
+        
 
       # Set up Node.js environment
       - name: Install Node.js
@@ -64,13 +65,21 @@ jobs:
 
       # Install Hexo and dependencies
       - name: Install Hexo and dependencies
-        run: |
-          npm install hexo-cli -g
-          npm install
+        run: sudo npm install -g hexo-cli
 
-      # Re-generate the static website (if necessary)
-      - name: Generate Hexo site
-        run: hexo generate
+
+      - name: install deployer
+        run: npm install hexo-deployer-git --save
+
+      - name: generate watch
+        run: hexo generate --watch
+
+      - name: hexo clean
+        run: hexo clean
+
+      - name: deploy
+        run: hexo deploy
+        
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
