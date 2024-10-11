@@ -24,6 +24,7 @@ jobs:
           node-version: '20'  # Specify your Node.js version
           cache: 'npm'
 
+      # Install Hexo CLI and dependencies
       - name: Install Hexo and dependencies
         run: |
           npm install hexo-cli -g
@@ -33,18 +34,20 @@ jobs:
       - name: Generate Hexo site
         run: hexo generate
 
+      # Clone Playwright test repository
       - name: Clone Playwright test repository
+        run: git clone https://github.com/vvh24/IS373-Playwright.git
+
+      # Install Playwright dependencies
+      - name: Install Playwright dependencies
         run: |
-          git clone https://github.com/vvh24/IS373-Playwright.git
+          cd IS373-Playwright
           npm install
 
-
-      # Checkout the Playwright test repository
-      - name: Checkout Playwright test repository
-        uses: actions/checkout@v4
-        with:
-          repository: vvh24/IS373-Playwright
-          run: node test.js
+      # Run Playwright tests
+      - name: Run Playwright tests
+        run: npm test
+        working-directory: ./IS373-Playwright
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,30 +59,21 @@ jobs:
       - name: Checkout Hexo repository
         uses: actions/checkout@v4
         
-
       # Set up Node.js environment
-      - name: Install Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'  # Make sure it matches your environment
 
-      # Install Hexo and dependencies
+      # Install Hexo CLI and dependencies
       - name: Install Hexo and dependencies
-        run: sudo npm install -g hexo-cli
+        run: |
+          npm install hexo-cli -g
+          npm install
 
-
-      - name: install deployer
-        run: npm install hexo-deployer-git --save
-
-      - name: generate watch
-        run: hexo generate --watch
-
-      - name: hexo clean
-        run: hexo clean
-
-      - name: deploy
-        run: hexo deploy
-        
+      # Generate the Hexo site
+      - name: Generate Hexo site
+        run: hexo generate
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
@@ -87,4 +81,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hexo outputs the generated files to the 'public' directory
-
